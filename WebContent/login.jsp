@@ -1,42 +1,16 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
-	<title>Web ToDoList</title>
-	<link type="text/css" rel="stylesheet" href="css/style.css">
+<title>Web ToDoList</title>
+<link type="text/css" rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<!-- ${STUDENT_LIST}-->
-<div id="wrapper">
-	<div id="header">
-		<h2>Log into your account</h2>
-	</div>
-</div>
-<div id="container">
-	<div id="content">
-		<form action="AddStudentServlet" method="get">
-			<input type="submit" value="Add Student"/>
-		</form>
-		<table>
-			<tr>
-				<th>First Name </th>
-				<th>Last Name</th>
-				<th>Email </th>
-			</tr>
-			<c:forEach var="tempStudent" items="${STUDENT_LIST }" >
-				<c:url var="EditLink" value= "EditStudentServlet">
-					<c:param name="studentId" value="${tempStudent.id}"/>
-				</c:url>
-				<c:url var="DeleteLink" value= "DeleteStudentServlet">
-					<c:param name="studentId" value="${tempStudent.id}"/>
-				</c:url>
-				<tr>
-				<td> ${tempStudent.first_Name}</td>
-				<td> ${tempStudent.last_Name}</td>
-				<td> ${tempStudent.email}</td>
-				<td> <a href="${EditLink }"> Edit</a>|<a href="${DeleteLink }">Delete</a></td>
-			</c:forEach>
-		</table>
-	</div>
-</div>
+	<form class="login" method="post" action="LoginServlet">
+		<h1 class="login-title">WebToDoList Login</h1>
+		<input name ="username" type="text" class="login-input" value="<c:out value="${sessionScope.USER_NAME}"/>" placeholder="Username" autofocus> 
+		<input name = "password" type="password" class="login-input" placeholder="Password"> 
+   		<p class = "error"><c:out value="${param.message}"/></p>
+		<input type="submit" value="Log In" class="login-button">
+	</form>
 </body>
 </html>
