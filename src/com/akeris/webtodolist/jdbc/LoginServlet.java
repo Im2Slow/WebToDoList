@@ -22,6 +22,7 @@ public class LoginServlet extends HttpServlet {
 	private DBUtil dbUtil;
 	@Resource (name="jdbc/webtodolist")
 	private DataSource dataSource;
+	HttpSession session;
 	private static String connectionError = "Error : your username and/or password is not valid because it doesn't exist in our database";
 	/**
 	 * @see Servlet#init(ServletConfig)
@@ -37,6 +38,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		session = null;
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
 		dispatcher.forward(request, response);
 	}
@@ -55,8 +57,9 @@ public class LoginServlet extends HttpServlet {
 				response.sendRedirect("LoginServlet?message=" + connectionError);
 			}
 			else {
-				HttpSession session = request.getSession();
+				session = request.getSession();
 				session.setAttribute("USER_NAME", userName);
+				session.setAttribute("ROLE", usr.getRole());
 				//request.setAttribute("USER_NAME", userName);
 				response.sendRedirect("TodoListServlet");
 				return;

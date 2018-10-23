@@ -1,6 +1,7 @@
 package com.akeris.webtodolist.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -70,6 +71,76 @@ public List<TodoList> getToDoList() throws Exception {
 		close(myConn,myStmt,myRs);
 	}
 	return todolists;
+}
+public void addTodo(TodoList todo) {
+	Connection myConn = null;
+	PreparedStatement myStmt = null;
+	ResultSet myRs = null;
+	try {
+		myConn = dataSource.getConnection();
+		String sql = "INSERT INTO todos(description) VALUES (?)";
+		myStmt = myConn.prepareStatement(sql);
+		String description = todo.getDescription();
+		myStmt.setString(1, description);
+		myStmt.execute();
+	}
+	catch(Exception e){
+		System.out.println(e.getMessage());
+	}
+	finally {
+		close(myConn,myStmt,myRs);
+	}
+}
+public TodoList fetchTodo(int id) {
+	Connection myConn = null;
+	Statement myStmt = null;
+	ResultSet myRs = null;
+	TodoList todo = null;
+	try {
+		myConn = dataSource.getConnection();
+		myStmt = myConn.createStatement();
+		String sql = "select * from todos where id="+id;
+		myRs = myStmt.executeQuery(sql);
+		while(myRs.next()) {
+			String description = myRs.getString("description");
+			todo = new TodoList(id,description);
+		}
+	}catch(Exception e) {
+		System.out.println(e.getMessage());return null;
+	} finally {
+		close(myConn,myStmt,myRs);
+	}
+	return todo;
+}
+public void updateTodo(TodoList todo) {
+	Connection myConn = null;
+	PreparedStatement myStmt = null;
+	try {
+		myConn = dataSource.getConnection();
+		String sql = "update todos set description=? where id=?";
+		myStmt = myConn.prepareStatement(sql);
+		myStmt.setString(1, todo.getDescription());
+		myStmt.setInt(2, todo.getId());
+		myStmt.execute();
+	}catch(Exception e) {
+		System.out.println(e.getMessage());
+	}finally {
+		close(myConn,myStmt,null);
+	}
+}
+public void deleteTodo(int id) {
+	Connection myConn = null;
+	Statement myStmt = null;
+	try {
+		myConn = dataSource.getConnection();
+		myStmt = myConn.createStatement();
+		String sql = "delete from todos where id="+id;
+		myStmt.execute(sql);
+	}catch(Exception e) {
+		System.out.println(e.getMessage());
+	}finally {
+		close(myConn,myStmt,null);
+	}	
 }
 private void close(Connection myConn, Statement myStmt, ResultSet myRs) {
 try{
